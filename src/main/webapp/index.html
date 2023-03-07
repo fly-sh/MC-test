@@ -96,47 +96,6 @@
     }).then((response) => console.log(response));
   }
 
-  // 알림톡 폼 불러오기
-  function loadKkoForm() {
-      //var param = "type=kko";
-
-      var param = $("#headerForm").serialize();
-      fileByteS = null;
-      $.ajax({
-          url: "/customActivity/message/ntfcTalk.do", //https://dev-apmc.cjmplace.com/loadKkoForm
-          type: "post",
-          async : false,
-          data: param,
-          timeout: 15000,
-          tryCount: 0,
-          retryLimit: 3,
-          error: function(xhr, status, e) {
-              if (xhr.status == 500) {
-                  //alert("ERROR");//alertAjaxLoadError();
-                  action_popup.alert("ERROR");
-              } else {
-                  this.tryCount++;
-                  if (this.tryCount <= this.retryLimit) $.ajax(this);
-                  else action_popup.alert("ERROR");//alert("ERROR");//alertAjaxLoadError();
-              }
-          },
-          success: function(data) {
-
-              $("#formDiv").html(data);
-              $("#kkoTab").addClass("on");
-              $("#kkfTab").removeClass("on");
-              $("#msgTab").removeClass("on");
-
-              //getXlsHeader();
-              if(userInfo != ""){
-                  setUserDataforTab(userInfo);
-              }
-          },
-          complete: function(xhr, status) {
-              render($("#langType").val());
-          }
-      });
-  }
 
 </script>
 </body>
