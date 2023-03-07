@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+  <meta name="robots" content="index,follow">
+  <title>kakao message</title>
+
+  <link rel="shortcut icon" href="assets/fav.ico">
+  <link rel="apple-touch-icon" href="assets/fav.png">
+  <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+  <link rel="stylesheet" href="assets/css/common.css" type="text/css">
+  <link rel="stylesheet" href="assets/css/content.css" type="text/css">
+  <link type="text/css" rel="stylesheet" href="assets/css/jquery.timepicker.css" media=""/>
+  <link rel="stylesheet" href="assets/css/jquery-ui.css" type="text/css" />
+  <link rel="stylesheet" href="/resources/css/multilingual.css" type="text/css">
+
+  <script type="text/javascript" src="assets/js/jquery-1.11.2.min.js"></script>
+  <script type="text/javascript" src="assets/js/jquery-ui-1.10.2.custom.min.js"></script>
+  <script type="text/javascript" src="assets/js/jquery.timepicker.min.js" ></script>
+  <script type="text/javascript" src="assets/js/frUtil.js"></script>
+  <script type="text/javascript" src="assets/js/common.js"></script>
+  <script type="text/javascript" src="assets/js/respond.min.js"></script>
+  <script type="text/javascript" src="assets/js/comfunc.js"></script>
+  <script type='text/javascript' src='/resources/js/lib/vendor/jquery.ui.datepicker.js'></script>
+  <script type='text/javascript' src='/resources/js/lib/vendor/jquery.ui.datepicker-ko.js'></script>
+  <script type='text/javascript' src='/resources/js/lib/vendor/jquery.ui.datepicker-en.js'></script>
+  <script type='text/javascript' src='/resources/js/multilingual.js'></script>
+
+  <script type='text/javascript' src='/resources/js/ajaxCommon.js'></script>
+  <script type="text/javascript" src="assets/js/require.js"></script>
+  <style>
+    #divPosition {
+      position : absolute;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #textA01 {
+      width : 100%;
+      height : 300px;
+
+    }
+  </style>
+
+</head>
+<body>
+<form id="headerForm" name="headerForm" method="post">
+  <input type="hidden" id="mber_no" name="mber_no" />
+  <input type="hidden" id="org_id" name="org_id" />
+  <input type="hidden" id="msgTypeMO" name="msgTypeMO" />
+  <input type="hidden" id="langType" name="langType"/>
+</form>
+
+  <div id="divPosition">
+    <div>
+      <label>phone number</label>
+    </div>
+    <input type="tel" id="phone" name="phone" required placeholder="00*-000*-0000" pattern="[0-9]{2,3}-[0-9]{3,4}-[0-9]{3,4}"
+           minlength="9" maxlength="13" size="30">
+    <div>
+      <label>text</label>
+    </div>
+    <textarea id="textA01" name="textA01">
+
+    </textarea>
+    <div>
+      <button onclick="smsSend()">send</button>
+    </div>
+  </div>
+
+
+<script type="text/javascript">
+
+  $(window).ready(loadKkoForm);
+
+  function smsSend() {
+
+    fetch("https://api.megabird.co.kr:8080/v1/openapi/sms/send", {
+      method : "POST",
+      headers : {
+        "Content-Type" : "application/json",
+        "Authorization" : "eyJhbGciOiJIUzM4NCJ9.eyJ0b2tlbkRpdiI6IjNyZCIsIm1lbWJlcklkIjoiNDc2YWRlYTE4NzVjNDI4ZGI3NGJmNjAwN2ZkYWM2MTUiLCJpc0FjY2Vzc1Rva2VuIjp0cnVlLCJpYXQiOjE2Nzc4MjcxNTksImV4cCI6MzIzMzAyNzE1OX0.j0YkDKb0ERHQiNulIaaj4EoCPYY5WvLTM0KQ6qNihLecGiZn912KC0NWFoeUM5cC"
+      },
+      body: JSON.stringify({
+            svcKndCd : "SMS",
+            msgCotn : $("#textA01").val(),
+            adIncluYn : "N",
+            snPhnum : "01020949987",
+            messageReceiverList : [{
+                mbnum : $("#phone").val()
+              }
+            ]
+      }),
+    }).then((response) => console.log(response));
+  }
+
+  // 알림톡 폼 불러오기
+  function loadKkoForm() {
+      //var param = "type=kko";
+
+      var param = $("#headerForm").serialize();
+      fileByteS = null;
+      $.ajax({
+          url: "/customActivity/message/ntfcTalk.do", //https://dev-apmc.cjmplace.com/loadKkoForm
+          type: "post",
+          async : false,
+          data: param,
+          timeout: 15000,
+          tryCount: 0,
+          retryLimit: 3,
+          error: function(xhr, status, e) {
+              if (xhr.status == 500) {
+                  //alert("ERROR");//alertAjaxLoadError();
+                  action_popup.alert("ERROR");
+              } else {
+                  this.tryCount++;
+                  if (this.tryCount <= this.retryLimit) $.ajax(this);
+                  else action_popup.alert("ERROR");//alert("ERROR");//alertAjaxLoadError();
+              }
+          },
+          success: function(data) {
+
+              $("#formDiv").html(data);
+              $("#kkoTab").addClass("on");
+              $("#kkfTab").removeClass("on");
+              $("#msgTab").removeClass("on");
+
+              //getXlsHeader();
+              if(userInfo != ""){
+                  setUserDataforTab(userInfo);
+              }
+          },
+          complete: function(xhr, status) {
+              render($("#langType").val());
+          }
+      });
+  }
+
+</script>
+</body>
+</html>

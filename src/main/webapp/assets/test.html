@@ -1,0 +1,1839 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/umsLayout">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+    <meta name="robots" content="index,follow">
+    <title>Notiforce message</title>
+
+    <link rel="shortcut icon" href="assets/fav.ico">
+    <link rel="apple-touch-icon" href="assets/fav.png">
+    <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/css/common.css" type="text/css">
+    <link rel="stylesheet" href="assets/css/content.css" type="text/css">
+    <link type="text/css" rel="stylesheet" href="assets/css/jquery.timepicker.css" media=""/>
+    <link rel="stylesheet" href="assets/css/jquery-ui.css" type="text/css" />
+    <link rel="stylesheet" href="/resources/css/multilingual.css" type="text/css">
+
+    <script type="text/javascript" src="assets/js/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="assets/js/jquery-ui-1.10.2.custom.min.js"></script>
+    <script type="text/javascript" src="assets/js/jquery.timepicker.min.js" ></script>
+    <script type="text/javascript" src="assets/js/frUtil.js"></script>
+    <script type="text/javascript" src="assets/js/common.js"></script>
+    <script type="text/javascript" src="assets/js/respond.min.js"></script>
+    <script type="text/javascript" src="assets/js/comfunc.js"></script>
+    <script type='text/javascript' src='/resources/js/lib/vendor/jquery.ui.datepicker.js'></script>
+    <script type='text/javascript' src='/resources/js/lib/vendor/jquery.ui.datepicker-ko.js'></script>
+    <script type='text/javascript' src='/resources/js/lib/vendor/jquery.ui.datepicker-en.js'></script>
+    <script type='text/javascript' src='/resources/js/multilingual.js'></script>
+
+    <script type='text/javascript' src='/resources/js/ajaxCommon.js'></script>
+    <script type="text/javascript" src="assets/js/require.js"></script>
+    <script type="text/javascript">
+
+        (function() {
+
+        	/* alert 메시지 다국어 */
+            for(i=1;i<35;i++){
+            	document.write('<span id="a_'+i+'" data-lang="a_'+i+'" style="display:none;">[a_'+i+']</span>');
+            }
+
+            render("ko");
+
+            var config = {
+                baseUrl: 'assets/js'
+            };
+
+            var dependencies = [
+                'customActivity'
+            ];
+
+            require(config, dependencies);
+
+        })();
+
+    </script>
+
+    <script type="text/javascript" src="assets/js/jquery.form.js?nocache=202302280630"></script>
+
+</head>
+<body>
+<div id="wrap">
+    <div id="header">
+        <ul class="menu">
+            <form id="headerForm" name="headerForm" method="post">
+                <input type="hidden" id="mber_no" name="mber_no" />
+                <input type="hidden" id="org_id" name="org_id" />
+                <input type="hidden" id="msgTypeMO" name="msgTypeMO" />
+                <input type="hidden" id="langType" name="langType"/>
+            </form>
+            <input type="hidden" id="isSaveLoad">
+            <input type="hidden" id="saveUserInfo">
+            <li id="msgTab"><a href="#;" id="m_tab1" data-lang="m_tab1">[m_tab1]</a></li>
+            <li id="kkfTab"><a href="#;" id="m_tab2" data-lang="m_tab2">[m_tab2]</a></li>
+            <li id="kkoTab"><a href="#;" id="m_tab3" data-lang="m_tab3">[m_tab3]</a></li>
+        </ul>
+        <span class="util_link">
+
+			</span>
+        <div class="lang_btn">
+            <a href="#" class="on" id="btn-en">EN</a>
+            <a href="#" id="btn-ko">KR</a>
+        </div>
+        <div>
+				<span class="util_link">
+					<a href="#send_booking" class="gray_round_btn" onclick="sendBookResListMoPop();return false;" id="m_scheduled" data-lang="m_scheduled">[m_scheduled]</a>
+					<a href="#send_result" class="gray_round_btn" onclick="sendResListMoPop();return false;" id="m_result" data-lang="m_result">[m_result]</a>
+					<div style="text-align: end;">Version:0.0.14.0</div>
+				</span>
+        </div>
+    </div>
+
+    <div id="formDiv">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id="m_choose" data-lang="m_choose">[m_choose]</span></div>
+
+    <!--템플릿 리스트-->
+    <form id="TmpListModalForm" name="TmpListModalForm" method="post">
+        <input type="hidden" name="msgTypeMO" id="msgTypeMO" value="MSG"/>
+        <input type="hidden" id="pageIndex" name="pageIndex" value="" />
+        <input type="hidden" id="dsptch_id" name="dsptch_id" />
+        <input type="hidden" id="tmplat_cd" name="tmplat_cd" />
+        <input type="hidden" id="mber_no" name="mber_no" />
+        <input type="hidden" id="org_id" name="org_id" />
+
+        <div id="TmpListModal" class="pop_wrap" style="display:none;">
+            <!--p_content-->
+            <div class="pop_inner" style="width:950px; height:700px; " id="tmpListContent">
+
+            </div>
+            <!--p_content-->
+        </div>
+
+    </form>
+
+</div>
+
+<!--popup_alert-->
+<!--modal Al-->
+<div class="modal Al modal-section" style="display: none;">
+    <div class="p_head">
+        <h2>Alert</h2><button class="pop_close">닫기</button>
+    </div>
+    <div class="p_body">
+        <p><img class="ic_bang" src="../static/assets/images/alert.png"><span id="alText">알림창</span></p>
+    </div>
+    <div class="p_foot"><a href="#" class="p_close_text pop_close" data-lang="f_close">[f_close]</a></div>
+</div>
+<!--modal Al/-->
+<div class="modal-bg" style="display: none;"></div>
+<!--popup_alert/-->
+
+<!--popup_delete-->
+<!--modal Del-->
+<div class="modal Del modal-section" style="display: none;">
+    <div class="p_head">
+        <h2>삭제</h2><button class="pop_close">닫기</button>
+    </div>
+    <div class="p_body">
+        <p><img class="ic_bang" src="../static/assets/images/alert.png"><span id="confText">삭제 하시겠습니까?</span></p>
+    </div>
+    <div class="p_foot"><a href="#" class="p_close_text pop_check">확인</a><a href="#" class="p_close_text pop_close">취소</a></div>
+</div>
+<!--modal Del/-->
+<div class="modal-bg" style="display: none;"></div>
+<!--popup_delete/-->
+
+<!--popup_loading-->
+<!--modal Lo-->
+<div class="modal Lo modal-section" style="display: none;">
+    <div class="p_head">
+        <h2 data-lang="f_loading">[f_loading]</h2><button class="pop_close">닫기</button>
+    </div>
+    <div class="p_body">
+        <p><span class="loader"></span></p>
+    </div>
+    <div class="p_foot"><a href="#" class="p_close_text pop_close" data-lang="f_close">[f_close]</a></div>
+</div>
+<!--modal Lo/-->
+<div class="modal-bg" style="display: none;"></div>
+<!--popup_loading/-->
+
+<script type="text/javascript">
+
+		var personalFieldArr;
+		var dataExtensionObj = new Object();
+
+		var fileByteS = null;
+		var userInfo = "";
+		var userOrg = "";
+
+		$(function(){
+
+			$(window).on("load", function(){
+				// 첫 로드시  폼 읽어옴
+				//loadMsgForm();
+				//render("en");
+				//$("#langType").val("en");
+				setLang("ko");
+				btnEvent();
+			});
+
+			// 탭 전환시 current 클래스 삭제
+			$("#tabs>li").on("click", function() {$(this).removeClass("on");});
+
+			$("#kkfTab").on("click", function(){
+
+				loadKkfForm();
+
+			});
+
+			$("#kkoTab").on("click", function(){
+
+				loadKkoForm();
+			});
+
+			$("#msgTab").on("click", function(){
+
+				loadMsgForm();
+			});
+
+			if ($("#filepath1").val() != "") {
+				var fname = $("#msgThumbImg1").find(".file_name .file_name_s").text().substring($("#msgThumbImg1").find(".file_name .file_name_s").text().lastIndexOf("\/") + 1, $("#msgThumbImg1").find(".file_name .file_name_s").text().length);
+				$("#msgThumbImg1").find(".file_name .file_name_s").text(fname);
+			}
+
+			if ($("#filepath2").val() != "") {
+				var fname = $("#msgThumbImg2").find(".file_name .file_name_s").text().substring($("#msgThumbImg2").find(".file_name .file_name_s").text().lastIndexOf("\/") + 1, $("#msgThumbImg2").find(".file_name .file_name_s").text().length);
+				$("#msgThumbImg2").find(".file_name .file_name_s").text(fname);
+			}
+
+			if ($("#filepath3").val() != "") {
+				var fname = $("#msgThumbImg3").find(".file_name .file_name_s").text().substring($("#msgThumbImg3").find(".file_name .file_name_s").text().lastIndexOf("\/") + 1, $("#msgThumbImg3").find(".file_name .file_name_s").text().length);
+				$("#msgThumbImg3").find(".file_name .file_name_s").text(fname);
+			}
+
+			// 이미지 업로드
+			$("#imgFile1").on("change", function(){
+				msgImgUpload("imgFile1");
+			});
+
+			// 이미지 업로드
+			$("#imgFile2").on("change", function(){
+				msgImgUpload("imgFile2");
+			});
+
+			// 이미지 업로드
+			$("#imgFile3").on("change", function(){
+				msgImgUpload("imgFile3");
+			});
+
+			//$("#adYn").attr("checked", false);
+		});
+
+		function setLang(lang) {
+			if(lang == "ko"){
+				$("#btn-en").removeClass();
+				$("#btn-ko").addClass("on");
+	        	render("ko");
+	        	$("#langType").val("ko");
+			}else{
+				$("#btn-ko").removeClass();
+				$("#btn-en").addClass("on");
+	        	render("en");
+	        	$("#langType").val("en");
+			}
+		}
+
+		function btnEvent(){
+			$("#btn-en").on("click", function(){
+				$("#btn-ko").removeClass();
+				$("#btn-en").addClass("on");
+	        	render("en");
+	        	$("#langType").val("en");
+			});
+	        $("#btn-ko").on("click", function(){
+	        	$("#btn-en").removeClass();
+				$("#btn-ko").addClass("on");
+	        	render("ko");
+	        	$("#langType").val("ko");
+			});
+		}
+
+		function advYnFun(adYn,obj) {
+			if(adYn == "Y"){
+				$("#rejNum_tr").show();
+				$("#nightStatus").show();
+				checkForNight();
+				adtextInsert(obj);
+			}else{
+				$("#rejNum_tr").hide();
+				$("#nightStatus").hide();
+				$("#textMsgTime").timepicker('remove');
+		    	$("#textMsgTime").timepicker({
+			        'minTime': '00:00am', // 조회하고자 할 시작 시간 ( 00:15분 부터 선택 가능하다. )
+			        'maxTime': '23:45pm', // 조회하고자 할 종료 시간 ( 20시 까지 선택 가능하다. )
+			        'timeFormat': 'H:i',
+			        'step': 15 // 30분 단위로 지정. ( 10을 넣으면 10분 단위 )
+			    });
+				adtextInsert(obj);
+			}
+			chkLen();
+		}
+
+		function checkForNight() {
+			if (!$("#nightYn").is(":checked")) {
+				$("#nightYn").prop('checked', false);
+				$("#textMsgTime").timepicker('remove');
+		    	$("#textMsgTime").timepicker({
+			        'minTime': '08:00am', // 조회하고자 할 시작 시간 ( 00:15분 부터 선택 가능하다. )
+			        'maxTime': '20:00pm', // Div조회하고자 할 종료 시간 ( 20시 까지 선택 가능하다. )
+			        'timeFormat': 'H:i',
+			        'step': 15 // 30분 단위로 지정. ( 10을 넣으면 10분 단위 )
+			    });
+				$("#frdTime").timepicker('remove');
+		    	$("#frdTime").timepicker({
+			        'minTime': '08:00am', // 조회하고자 할 시작 시간 ( 00:15분 부터 선택 가능하다. )
+			        'maxTime': '20:00pm', // Div조회하고자 할 종료 시간 ( 20시 까지 선택 가능하다. )
+			        'timeFormat': 'H:i',
+			        'step': 15 // 30분 단위로 지정. ( 10을 넣으면 10분 단위 )
+			    });
+			} else {
+				action_popup.alert($("#a_29").text());
+				$("#nightYn").prop('checked', true);
+				$("#textMsgTime").timepicker('remove');
+		    	$("#textMsgTime").timepicker({
+			        'minTime': '21:00pm', // 조회하고자 할 시작 시간 ( 00:15분 부터 선택 가능하다. )
+			        'maxTime': '07:45am', // Div조회하고자 할 종료 시간 ( 20시 까지 선택 가능하다. )
+			        'timeFormat': 'H:i',
+			        'step': 15 // 30분 단위로 지정. ( 10을 넣으면 10분 단위 )
+			    });
+				$("#frdTime").timepicker('remove');
+		    	$("#frdTime").timepicker({
+			        'minTime': '21:00pm', // 조회하고자 할 시작 시간 ( 00:15분 부터 선택 가능하다. )
+			        'maxTime': '07:45am', // Div조회하고자 할 종료 시간 ( 20시 까지 선택 가능하다. )
+			        'timeFormat': 'H:i',
+			        'step': 15 // 30분 단위로 지정. ( 10을 넣으면 10분 단위 )
+			    });
+			}
+		}
+
+		function closeModal(_id) {
+			$("#pageIndex").val("1");
+			$("#tmpListContent").html("");
+			closePop(_id);
+		}
+
+		function sendBookResListMoPop() {
+
+			$("#tmpListContent").css("width","950px");
+
+
+			var pageIndex = document.getElementById("pageIndex");
+			if(pageIndex.value == "") {
+				pageIndex.value = "1";
+			}
+			//$("#msgTypeMO").val($("#msgType").val());
+			/* $("#org_id").val(userOrg.org_id);
+			$("#mber_no").val(userOrg.mber_no); */
+			$('#headerForm [name="msgTypeMO"]').val($("#msgType").val());
+			$('#TmpListModalForm [name="msgTypeMO"]').val($("#msgType").val());
+
+			var param = $("#TmpListModalForm").serialize();
+
+			$.ajax({
+				url: "/customActivity/message/sendBookResList.do",
+				type: "post",
+				async : false,
+				data: param,
+				timeout: 15000,
+				tryCount: 0,
+				retryLimit: 3,
+				error: function(xhr, status, e) {
+					if (xhr.status == 500) {
+						//alert("ERROR");//alertAjaxLoadError();
+						action_popup.alert("ERROR");
+					} else {
+						this.tryCount++;
+						if (this.tryCount <= this.retryLimit) $.ajax(this);
+						else action_popup.alert("ERROR");//alert("ERROR");//alertAjaxLoadError();
+					}
+				},
+				success: function(data) {
+					$("#tmpListContent").html(data);
+				},
+				complete: function(xhr, status) {
+					render($("#langType").val());
+			    }
+			});
+
+			openPop('TmpListModal');
+			return false;
+		}
+
+		function sendResListMoPop() {
+
+			$("#tmpListContent").css("width","950px");
+
+
+			var pageIndex = document.getElementById("pageIndex");
+			if(pageIndex.value == "") {
+				pageIndex.value = "1";
+			}
+			//$("#msgTypeMO").val($("#msgType").val());
+			/* $("#org_id").val(userOrg.org_id);
+			$("#mber_no").val(userOrg.mber_no); */
+			$('#headerForm [name="msgTypeMO"]').val($("#msgType").val());
+			$('#TmpListModalForm [name="msgTypeMO"]').val($("#msgType").val());
+
+			var param = $("#TmpListModalForm").serialize();
+
+			$.ajax({
+				url: "/customActivity/message/sendResList.do",
+				type: "post",
+				async : false,
+				data: param,
+				timeout: 15000,
+				tryCount: 0,
+				retryLimit: 3,
+				error: function(xhr, status, e) {
+					if (xhr.status == 500) {
+						//alert("ERROR");//alertAjaxLoadError();
+						action_popup.alert("ERROR");
+					} else {
+						this.tryCount++;
+						if (this.tryCount <= this.retryLimit) $.ajax(this);
+						else action_popup.alert("ERROR");//alert("ERROR");//alertAjaxLoadError();
+					}
+				},
+				success: function(data) {
+					$("#tmpListContent").html(data);
+				},
+				complete: function(xhr, status) {
+					render($("#langType").val());
+			    }
+			});
+
+			openPop('TmpListModal');
+			return false;
+		}
+
+		function tmpListMoPop() {
+
+			$("#tmpListContent").css("width","950px");
+
+
+			var pageIndex = document.getElementById("pageIndex");
+			if(pageIndex.value == "") {
+				pageIndex.value = "1";
+			}
+			//$("#msgTypeMO").val($("#msgType").val());
+			/* $("#org_id").val(userOrg.org_id);
+			$("#mber_no").val(userOrg.mber_no); */
+			$('#headerForm [name="msgTypeMO"]').val($("#msgType").val());
+			$('#TmpListModalForm [name="msgTypeMO"]').val($("#msgType").val());
+
+			var param = $("#TmpListModalForm").serialize();
+
+			$.ajax({
+				url: "/customActivity/message/tmpList.do",
+				type: "post",
+				async : false,
+				data: param,
+				timeout: 15000,
+				tryCount: 0,
+				retryLimit: 3,
+				error: function(xhr, status, e) {
+					if (xhr.status == 500) {
+						//alert("ERROR");//alertAjaxLoadError();
+						action_popup.alert("ERROR");
+					} else {
+						this.tryCount++;
+						if (this.tryCount <= this.retryLimit) $.ajax(this);
+						else action_popup.alert("ERROR");//alert("ERROR");//alertAjaxLoadError();
+					}
+				},
+				success: function(data) {
+					$("#tmpListContent").html(data);
+				},
+				complete: function(xhr, status) {
+					render($("#langType").val());
+			    }
+			});
+
+			openPop('TmpListModal');
+			return false;
+		}
+
+		function tmpRegMoPop() {
+			$("#tmpListContent").css("width","750px");
+			$("#msgTypeMO").val($("#msgType").val());
+
+			//var param = $("#TmpListModalForm").serialize();
+			$('#headerForm [name="msgTypeMO"]').val($("#msgTypeMO").val());
+			//var param = "msgTypeMO=" + $("#msgTypeMO").val();
+
+			var param = $("#headerForm").serialize();
+
+			$.ajax({
+				url: "/customActivity/message/tmpRegist.do",
+				type: "post",
+				async : false,
+				data: param,
+				timeout: 15000,
+				tryCount: 0,
+				retryLimit: 3,
+				error: function(xhr, status, e) {
+					if (xhr.status == 500) {
+						//alert("ERROR");//alertAjaxLoadError();
+						action_popup.alert("ERROR");
+					} else {
+						this.tryCount++;
+						if (this.tryCount <= this.retryLimit) $.ajax(this);
+						else action_popup.alert("ERROR");//alert("ERROR");//alertAjaxLoadError();
+					}
+				},
+				success: function(data) {
+					$("#tmpListContent").html(data);
+				},
+				complete: function(xhr, status) {
+					render($("#langType").val());
+			    }
+			});
+
+			openPop('TmpListModal');
+			return false;
+		}
+
+
+		// 친구톡 폼 불러오기
+		 function loadKkfForm() {
+			//var param = "type=kkf";
+
+			var param = $("#headerForm").serialize();
+			fileByteS = null;
+			$.ajax({
+				url: "/customActivity/message/frdTalk.do",
+				type: "post",
+				async : false,
+				data: param,
+				timeout: 15000,
+				tryCount: 0,
+				retryLimit: 3,
+				error: function(xhr, status, e) {
+					if (xhr.status == 500) {
+						//alert("ERROR");//alertAjaxLoadError();
+						action_popup.alert("ERROR");
+					} else {
+						this.tryCount++;
+						if (this.tryCount <= this.retryLimit) $.ajax(this);
+						else action_popup.alert("ERROR");//alert("ERROR");//alertAjaxLoadError();
+					}
+				},
+				success: function(data) {
+
+					$("#formDiv").html(data);
+					$("#kkfTab").addClass("on");
+					$("#kkoTab").removeClass("on");
+					$("#msgTab").removeClass("on");
+
+					//getXlsHeader();
+					if(userInfo != ""){
+						setUserDataforTab(userInfo);
+					}
+				},
+				complete: function(xhr, status) {
+					render($("#langType").val());
+			    }
+			});
+		}
+
+		// 알림톡 폼 불러오기
+		function loadKkoForm() {
+			//var param = "type=kko";
+
+			var param = $("#headerForm").serialize();
+			fileByteS = null;
+			$.ajax({
+				url: "/customActivity/message/ntfcTalk.do", //https://dev-apmc.cjmplace.com/loadKkoForm
+				type: "post",
+				async : false,
+				data: param,
+				timeout: 15000,
+				tryCount: 0,
+				retryLimit: 3,
+				error: function(xhr, status, e) {
+					if (xhr.status == 500) {
+						//alert("ERROR");//alertAjaxLoadError();
+						action_popup.alert("ERROR");
+					} else {
+						this.tryCount++;
+						if (this.tryCount <= this.retryLimit) $.ajax(this);
+						else action_popup.alert("ERROR");//alert("ERROR");//alertAjaxLoadError();
+					}
+				},
+				success: function(data) {
+
+					$("#formDiv").html(data);
+					$("#kkoTab").addClass("on");
+					$("#kkfTab").removeClass("on");
+					$("#msgTab").removeClass("on");
+
+					//getXlsHeader();
+					if(userInfo != ""){
+						setUserDataforTab(userInfo);
+					}
+				},
+				complete: function(xhr, status) {
+					render($("#langType").val());
+			    }
+			});
+		}
+
+		// 문자 폼 불러오기
+		function loadMsgForm() {
+
+			//var param = "type=msg";
+			var param = $("#headerForm").serialize();
+			fileByteS = null;
+			$.ajax({
+				url: "/customActivity/message/textMessage.do",  /* https://dev-apmc.cjmplace.com/loadMsgForm */
+				type: "post",
+				async : false,
+				data: param,
+				timeout: 15000,
+				tryCount: 0,
+				retryLimit: 3,
+				error: function(xhr, status, e) {
+					if (xhr.status == 500) {
+						//alert("ERROR");//alertAjaxLoadError();
+						action_popup.alert("ERROR");
+					} else {
+						this.tryCount++;
+						if (this.tryCount <= this.retryLimit) $.ajax(this);
+						else action_popup.alert("ERROR");//alert("ERROR");//alertAjaxLoadError();
+					}
+				},
+				success: function(data) {
+					$("#formDiv").html(data);
+					$("#msgTab").addClass("on");
+					$("#kkfTab").removeClass("on");
+					$("#kkoTab").removeClass("on");
+
+					//getXlsHeader();
+					if(userInfo != ""){
+						setUserDataforTab(userInfo);
+					}
+				},
+				complete: function(xhr, status) {
+					render($("#langType").val());
+			    }
+			});
+		}
+
+
+
+
+		function isEmptyCheckNoFocus(object, msg) {
+			try{
+				//var str = $(object).attr("value");
+				var str = $(object).val();			// ver 1.9.1
+				str = $.trim(str);
+				if(str == ''){
+					if(msg != null && '' != msg){
+						showAlertLayer(msg);
+					};
+					return false;
+				}else{
+					return true;
+				}
+			}catch (e) {
+				showAlertLayer(e);
+			}
+		}
+
+		function addprofile()
+		{
+			/* window.open('/profileKey','newpop','width=800,height=600,top=50,left=50'); */
+			alert("sema 프로필 등록 링크");
+			return false;
+
+		}
+
+		function tmpListPop(type)
+		{
+			window.open('/customActivity/message/tmpList.do?msgType='+type,'msgParentWin','location=no,toolbar=no,menubar=no,width=800,height=600,top=50,left=50');
+			return false;
+
+		}
+
+		function filecount()
+		{
+		    var filecnt = 1;
+		    if($('#filepath1').val()) {
+		    	filecnt++;
+		    }
+		    if($('#filepath2').val()) {
+		    	filecnt++;
+		    }
+		    if($('#filepath3').val()) {
+		    	filecnt++;
+		    }
+
+		    $("#filecnt").val(filecnt);
+		}
+
+		//발송 파일 업로드
+		function msgImgUpload(type) {
+
+			var target;
+			target = $("#msgForm");
+
+			target.attr("action", "/fileupload/saveImg");
+			target.attr("target", "_self");
+
+			if( $("#" + type).val() == ""){
+				return false;
+			}
+
+			var options = {
+				type: "POST",
+				dataType: "JSON",
+				timeout: 1000 * 120,
+				enctype: 'multipart/form-data',
+				tryCount: 0,
+				retryLimit: 3,
+				error: function(xhr, status, e) {
+					showAlertLayer("ajax 처리 중 오류가 발생했습니다. <br/> 다시 시도해주세요.");
+
+					// 초기화
+					if (type == "imgFile1"){
+						$("#imgFile1").parent().parent().find(".imgSc").attr("style", "background-image: url(assets/images/mss_eximg.png) ;");
+						$("#imgFile1").parent().parent().find(".file_name .file_name_s").text("");
+						$("#imgFile1").parent().parent().find(".file_name .file_name_d").css("display", "none");
+						$("#filepath1").val("");
+						$("#filetype1").val("");
+					}
+
+					// 초기화
+					if (type == "imgFile2"){
+						$("#imgFile2").parent().parent().find(".imgSc").attr("style", "background-image: url(assets/images/mss_eximg.png) ;");
+						$("#imgFile2").parent().parent().find(".file_name .file_name_s").text("");
+						$("#imgFile2").parent().parent().find(".file_name .file_name_d").css("display", "none");
+						$("#filepath2").val("");
+						$("#filetype2").val("");
+					}
+
+					// 초기화
+					if (type == "imgFile3"){
+						$("#imgFile3").parent().parent().find(".imgSc").attr("style", "background-image: url(assets/images/mss_eximg.png) ;");
+						$("#imgFile3").parent().parent().find(".file_name .file_name_s").text("");
+						$("#imgFile3").parent().parent().find(".file_name .file_name_d").css("display", "none");
+						$("#filepath3").val("");
+						$("#filetype3").val("");
+					}
+				},
+				beforeSubmit: function() {
+				},
+				success: function(responseText, statusText, xhr, $form) {
+					if(responseText["code"] == '200'){
+						$("#msgtype").val("MMS");
+
+						$("#smsTitle").removeClass();
+						$("#lmsTitle").removeClass();
+						$("#mmsTitle").addClass('on');
+
+						if (type == "imgFile1"){
+							$("#filepath1").val(responseText["path"]).change();
+							var filepath = "/fileupload/loadImg?filepath=" + responseText["path"];
+							previewImgThumb("#msgThumbImg1", filepath, responseText["fname"]);
+							initUploadFile("#imgFile1");
+							$("#filetype1").val("I");
+						};
+						if (type == "imgFile2"){
+							$("#filepath2").val(responseText["path"]).change();
+							var filepath = "/fileupload/loadImg?filepath=" + responseText["path"];
+							previewImgThumb("#msgThumbImg2", filepath, responseText["fname"]);
+							initUploadFile("#imgFile2");
+							$("#filetype2").val("I");
+						};
+						if (type == "imgFile3"){
+							$("#filepath3").val(responseText["path"]).change();
+							var filepath = "/fileupload/loadImg?filepath=" + responseText["path"];
+							previewImgThumb("#msgThumbImg3", filepath, responseText["fname"]);
+							initUploadFile("#imgFile3");
+							$("#filetype3").val("I");
+						};
+					} else {
+						showAlertLayer(responseText["result"] + "<br>다시 시도해주세요.");
+						if (type == "imgFile1"){
+							previewImgThumb("#msgThumbImg1", "", "");
+						}
+						if (type == "imgFile2"){
+							previewImgThumb("#msgThumbImg2", "", "");
+						}
+						if (type == "imgFile3"){
+							previewImgThumb("#msgThumbImg2", "", "");
+						}
+					}
+				}
+			}
+			target.ajaxSubmit(options);
+		}
+
+		// input file 초기화
+		function initUploadFile(obj) {
+			var agent = navigator.userAgent.toLowerCase();
+
+			if(agent.indexOf("msie") != -1) {
+				$(obj).replaceWith( $(obj).clone(true) );
+			} else {
+				$(obj).val("");
+			}
+
+		}
+
+		// 파일 치환 문구 불러오기
+		function getXlsHeader() {
+			$.ajax({
+				type : "POST",
+				url	 : "/fileupload/getFileHeader",
+				data : "fname=",
+				success : function(result) {
+
+					var headerCnt = result.data.length;
+					var customerInfo = "";
+
+					var chkHeader = "";
+					if (headerCnt > 0) {
+						for (var i = 0; headerCnt > i; i++) {
+							var tmp = result.data[i];
+
+							customerInfo += "<li><a href=\"javascript:txtInsert('" + tmp + "');\" class=\"excel-info\"><span>" + tmp + "</span></a></li>";
+
+							chkHeader += result.data[i];
+						}
+					}
+					$("#msg_cus_list").append(customerInfo);
+
+
+				},
+				error : function(result, errStr) {
+
+				}
+			});
+		}
+
+		//파일삭제
+		function fnFileDelete(type){
+			var file="";
+			if(type==1){
+				$("#imgFile1").parent().parent().find(".imgSc").attr("style", "background-image: url(assets/images/mss_eximg.png) ;");
+				$("#msgThumbImg1").find(".file_name .file_name_s").text("");
+				$("#msgThumbImg1").find(".file_name .file_name_d").css("display", "none");
+				$("#filepath1").val("");
+				$("#filetype1").val("");
+				file = "#imgFile1";
+			}else if(type ==2){
+				$("#imgFile2").parent().parent().find(".imgSc").attr("style", "background-image: url(assets/images/mss_eximg.png) ;");
+				$("#msgThumbImg2").find(".file_name .file_name_s").text("");
+				$("#msgThumbImg2").find(".file_name .file_name_d").css("display", "none");
+				$("#filepath2").val("");
+				$("#filetype2").val("");
+				file = "#imgFile2";
+			}else if(type ==3){
+				$("#imgFile3").parent().parent().find(".imgSc").attr("style", "background-image: url(assets/images/mss_eximg.png) ;");
+				$("#msgThumbImg3").find(".file_name .file_name_s").text("");
+				$("#msgThumbImg3").find(".file_name .file_name_d").css("display", "none");
+				$("#filepath3").val("");
+				$("#filetype3").val("");
+				file = "#imgFile3";
+			}
+			filecount();
+			var agent = navigator.userAgent.toLowerCase();
+			if(agent.indexOf("msie") != -1) {
+				$(file).replaceWith( $(file).clone(true) );
+			} else {
+				$(file).val("");
+			}
+
+			chkLen();
+		}
+
+		// 이미지 미리보기 창
+		function previewImgThumb(obj, path, fname) {
+			var wrap = $(obj);
+			var imgArea = wrap.find(".imgSc");
+			var fnameArea = wrap.find(".file_name .file_name_s");
+			var delArea = wrap.find(".file_name .file_name_d");
+
+			if(path == "" || fname == "") {
+				imgArea.attr("style", "background-image: url(assets/images/mss_eximg.png) ;");
+				fnameArea.text("");
+				delArea.css("display", "none");
+			} else {
+				imgArea.css("background-image", "url('" + path + "')");
+				fnameArea.text(fname);
+				delArea.css("display", "inline-block");
+			}
+		}
+
+		function fnChangeMsg(type){
+
+			var maxlength = 0;
+			type = type.toUpperCase();
+
+			if(type == 'SMS') {
+
+				maxlength = 90;
+				$("#msgtype").val("SMS");
+				$("#lmsTitle").removeClass();
+				$("#mmsTitle").removeClass();
+				$("#smsTitle").addClass('on');
+			} else if(type == 'LMS') {
+
+				maxlength = 2000;
+				$("#msgtype").val("LMS");
+				$("#smsTitle").removeClass();
+				$("#mmsTitle").removeClass();
+				$("#lmsTitle").addClass('on');
+
+			} else {
+				maxlength = 2000;
+				$("#msgtype").val("MMS");
+				$("#smsTitle").removeClass();
+				$("#lmsTitle").removeClass();
+				$("#mmsTitle").addClass('on');
+			}
+			chkLen();
+		}
+
+		//문자 길이 체크
+		function chkLen() {
+			var str = $("#msg").val();
+			var _byte = 0;
+			var strlength = 0;
+			var charStr = '';
+			var maxlength = 0;
+			var cutstr = '';
+			var re = /\r\n/g;
+
+			if($("#msgtype").val() != 'KKO' && $("#msgtype").val() != 'KKF') {
+				$("#beforeResult").html( str.replace(re, "<br>"));
+			}
+
+			// 문자열 byte계산
+			if (str.length > 0) {
+
+				for(var i = 0; i < str.length; i++) {
+					charStr=str.charAt(i);
+					if(escape(charStr).length > 4) _byte += 2;
+					else _byte++;
+
+					if (fileByteS == null) {
+						if (_byte <= 90) maxlength = 90;
+						else maxlength = 2000;
+					} else maxlength = 2000;
+
+					if (_byte <= maxlength) strlength = i+1;
+				}
+			} else {
+				if (fileByteS == null) maxlength = 90;
+				else maxlength = 2000;
+			}
+
+			if (maxlength == 90) {
+				$("#msgtype").val("SMS");
+				$("#lmsTitle").removeClass();
+				$("#mmsTitle").removeClass();
+				$("#smsTitle").addClass('on');
+				$("#subject").hide();
+			} else {
+				if (fileByteS == null) {
+					$("#msgtype").val("LMS");
+					$("#smsTitle").removeClass();
+					$("#lmsTitle").addClass('on');
+					$("#mmsTitle").removeClass();
+					$("#subject").show();
+				} else {
+					$("#msgtype").val("MMS");
+					$("#smsTitle").removeClass();
+					$("#lmsTitle").removeClass();
+					$("#mmsTitle").addClass('on');
+					$("#subject").show();
+				}
+			}
+
+			if((maxlength == 2000) && (_byte > maxlength)) {
+				cutstr = str.substr(str, strlength);
+				$("#msg").val(cutstr);
+				$("#msg_byte_num").text(maxlength + " byte / " + maxlength + " byte");
+				showAlertLayer("메세지는 최대 " + maxlength + " byte를 초과할 수 없습니다.");
+				return;
+			} else {
+				$("#msg_byte_num").text(_byte + " byte / " + maxlength + " byte");
+			}
+		}
+
+		//카카오 길이 체크
+		function kakaoChkLen() {
+			var str = $("#msg").val();
+			var _byte = 0;
+			var strlength = 0;
+			var charStr = '';
+			var maxlength = 1000;
+			var cutstr = '';
+
+			if(str.length <= 0){
+				$('#kko_byte_num').text("0 자 / " + maxlength + "  자");
+				return;
+			}
+
+			for(var i = 0; i < str.length; i++){
+				charStr=str.charAt(i);
+				if(escape(charStr).length > 4){
+					_byte += 2;
+				} else {
+					_byte++;
+				}
+				if(_byte <= maxlength){
+					strlength = i+1;
+				}
+			}
+
+			if(_byte > maxlength){
+				cutstr = str.substr(str, strlength);
+				$("#msg").val(cutstr);
+				$("#kko_byte_num").text(maxlength + " 자 / " + maxlength + " 자");
+				showAlertLayer("메세지는 최대 " + maxlength + " 자를 초과할 수 없습니다.");
+				return;
+			}else{
+				$("#kko_byte_num").text(_byte + " 자 / " + maxlength + " 자");
+			}
+		}
+
+		function mmschkLen() {
+			var str = $("#failmsg").val();
+			var _byte = 0;
+			var strlength = 0;
+			var charStr = '';
+			var maxlength = 0;
+			var cutstr = '';
+
+			// 문자열 byte계산
+			if (str.length > 0) {
+
+				for(var i = 0; i < str.length; i++) {
+					charStr=str.charAt(i);
+					if(escape(charStr).length > 4) _byte += 2;
+					else _byte++;
+
+					if ($("#failfilepath").val() == '') {
+						if (_byte <= 90) maxlength = 90;
+						else maxlength = 2000;
+					} else maxlength = 2000;
+
+					if (_byte <= maxlength) strlength = i+1;
+				}
+			} else {
+				if ($("#failfilepath").val() == '') maxlength = 90;
+				else maxlength = 2000;
+			}
+			if (str.length > 0) {
+				if (maxlength == 90) {
+
+					$("#failmsgtype").val("SMS");
+					$("#lmsTitle").removeClass();
+					$("#mmsTitle").removeClass();
+					$("#smsTitle").addClass('on');
+				} else {
+					if ($("#failfilepath").val() == '') {
+						$("#failmsgtype").val("LMS");
+						$("#smsTitle").removeClass();
+						$("#lmsTitle").addClass('on');
+						$("#mmsTitle").removeClass();
+					} else {
+						$("#failmsgtype").val("MMS");
+						$("#smsTitle").removeClass();
+						$("#lmsTitle").removeClass();
+						$("#mmsTitle").addClass('on');
+					}
+				}
+			}
+
+			if((maxlength == 2000) && (_byte > maxlength)) {
+				cutstr = str.substr(str, strlength);
+				$("#failmsg").val(cutstr);
+				$("#failmsg_byte_num").text(maxlength + " byte / " + maxlength + " byte");
+				showAlertLayer("메세지는 최대 " + maxlength + " byte를 초과할 수 없습니다.");
+				return;
+			} else {
+				$("#failmsg_byte_num").text(_byte + " byte / " + maxlength + " byte");
+			}
+		}
+
+		// 커서 위치에 텍스트 추가
+		function txtInsert(value) {
+			var area = $("#msg");
+			var val = area.val();
+			var selectStr = area[0].selectionStart; // 커서 시작 위치
+			var selectEnd = area[0].selectionEnd;	// 커서 마지막 위치
+			var beforeTxt = val.substring(0, selectStr);	// 초기값 ~ 커서 처음
+			var afterTxt = val.substring(selectEnd, val.length);	// 커서 마지막 ~ 마지막
+			var addTxt = "#" + "{" + value + "}";	// 파라미터 값
+
+			val = beforeTxt + addTxt + afterTxt;
+			area.val(val);
+
+			selectStr = selectStr + addTxt.length;
+			area[0].selectionStart = selectStr;
+			area[0].selectionEnd = selectStr;
+			area[0].focus();
+
+			// 메시지 내용 길이 체크
+			chkLen();
+		}
+
+		//커서 위치에 텍스트 추가
+		function mmstxtInsert(value) {
+			var area = $("#failmsg");
+			var val = area.val();
+			var selectStr = area[0].selectionStart; // 커서 시작 위치
+			var selectEnd = area[0].selectionEnd;	// 커서 마지막 위치
+			var beforeTxt = val.substring(0, selectStr);	// 초기값 ~ 커서 처음
+			var afterTxt = val.substring(selectEnd, val.length);	// 커서 마지막 ~ 마지막
+			var addTxt = value;	// 파라미터 값
+
+			val = beforeTxt + addTxt + afterTxt;
+			area.val(val);
+
+			selectStr = selectStr + addTxt.length;
+			area[0].selectionStart = selectStr;
+			area[0].selectionEnd = selectStr;
+			area[0].focus();
+
+			// 메시지 내용 길이 체크
+			mmschkLen();
+		}
+
+		function adtextInsert(obj){
+			var area = $("#msg");
+			var val = area.val();
+			var selectEnd = val.indexOf("무료수신거부");
+			var afterTxt = val.substring(selectEnd, val.length);
+
+			if(obj.value == "Y"){
+				//$("#adcheckyn").val("Y");
+				if(selectEnd < 1){
+					val = "(광고)\n" + val +  "\n무료수신거부 " + $("#rejectnum").val();
+					area.val(val);
+				}
+			}else{
+				//$("#adcheckyn").val("N");
+				if(val.substring(val.indexOf("(광고)")+4,"5") == "\n"){
+					val = val.replace("(광고)\n","");
+				}else if(val.indexOf("(광고)") == 0){
+					val = val.replace("(광고)","");
+				}
+
+				val = val.replace("\n"+afterTxt,"");
+				area.val(val);
+			}
+		}
+
+		// 문자 미리보기
+		function msgPreview() {
+
+			var msgTit;
+			var msgCont;
+			var mmsImg_1;
+			var mmsImg_2;
+			var mmsImg_3;
+			var minfo = $("#minfo_preview");
+
+			if ($("#subject").val() == null) msgTit = "";
+			else msgTit = $("#subject").val();
+			msgCont = htmlTag($("#msg").val());
+			msgCont = txtReplace(msgCont, "(?:\r\n|\r|\n)", "<br>");
+
+			if ($("#filepath1").val() == null || $("#filepath1").val() == "") mmsImg_1 = "";
+			else mmsImg_1 = $("#filepath1").val();
+
+			if ($("#filepath2").val() == null || $("#filepath2").val() == "") mmsImg_2 = "";
+			else mmsImg_2 = $("#filepath2").val();
+
+			if ($("#filepath3").val() == null || $("#filepath3").val() == "") mmsImg_3 = "";
+			else mmsImg_3 = $("#filepath3").val();
+
+			if(mmsImg_1 != "") {
+				$("#prevMmsImg_1").css("display", "block");
+				$("#prevMmsImg_1").find("img").attr("src", "/fileupload/loadImg?filepath=" + mmsImg_1);
+			} else {
+				$("#prevMmsImg_1").css("display", "none");
+				$("#prevMmsImg_1").find("img").attr("src", "");
+			}
+
+			if(mmsImg_2 != "") {
+				$("#prevMmsImg_2").css("display", "block");
+				$("#prevMmsImg_2").find("img").attr("src", "/fileupload/loadImg?filepath=" + mmsImg_2);
+			} else {
+				$("#prevMmsImg_2").css("display", "none");
+				$("#prevMmsImg_2").find("img").attr("src", "");
+			}
+
+			if(mmsImg_3 != "") {
+				$("#prevMmsImg_3").css("display", "block");
+				$("#prevMmsImg_3").find("img").attr("src", "/fileupload/loadImg?filepath=" + mmsImg_3);
+			} else {
+				$("#prevMmsImg_3").css("display", "none");
+				$("#prevMmsImg_3").find("img").attr("src", "");
+			}
+
+			minfo.find(".p_tit").text(msgTit);
+			minfo.find(".p_text").html(msgCont);
+
+			drawPreview();
+
+		}
+
+		function drawPreview() {
+			var target;
+			var minfo;
+
+			target = $("#CampPreviewCont");
+			minfo = $("#minfo_preview");
+
+			target.find("li").css("display", "none");
+			target.find("li").css("display", "none");
+
+			if ($("#msgtype").val() == "SMS") minfo.find(".p_tit").text("");
+			minfo.css("display", "inline-block");
+
+			openPop('CampPreview');
+		}
+		// html tag to preview
+		function htmlTag(val) {
+			var lt = "&lt;";
+			var gt = "&gt;";
+
+			try {
+				var regexLt = new RegExp("<", "g");
+				var regexRt = new RegExp(">", "g");
+
+				result = val.replace(regexLt, lt);
+				result = result.replace(regexRt, gt);
+
+			} catch (err) {
+				return false;
+			}
+
+			return result;
+		}
+		// 텍스트 replace
+		function txtReplace(val, regex, shift) {
+			if(shift == "undefined") {shift = ""};
+			var result;
+
+			try {
+				var newRegex = new RegExp(regex, "g");
+				result = val.replace(newRegex, shift);
+
+			} catch (err) {
+				return false;
+			}
+
+			return result;
+		}
+
+		function selectTmpMsg() {
+			var param = "";
+			$.ajax({
+		        url : '/tmpmsginfosms',
+		        type : 'post',
+		        data : param,
+		        dataType : 'text',
+		        success : function(data) {
+		        	if(data.length > 0){
+		        		var tmpmsginfo = JSON.parse(data);
+		        		$("#msgtype").val(tmpmsginfo.msgtype);
+		    			$("#subject").val(tmpmsginfo.subject);
+		    			if(tmpmsginfo.msg) {
+		                    $('#msg').val(tmpmsginfo.msg);
+		                    $("#adYn").attr("checked", true);
+		                }else{
+		                	$("#adYn").attr("checked", false);
+		                }
+		    			$("#filepath1").val(tmpmsginfo.filepath1);
+		    			$("#filepath2").val(tmpmsginfo.filepath2);
+		    			$("#filepath3").val(tmpmsginfo.filepath3);
+		    			$("#filecnt").val(tmpmsginfo.filecnt);
+
+		    			if(tmpmsginfo.filepath1) {
+		    				var filepath1 = tmpmsginfo.filepath1;
+		                    var filepath = "/fileupload/loadImg?filepath=" + filepath1;
+		                    var arrayFile = filepath1.split("/");
+		                    filepath1 = arrayFile[arrayFile.length-1];
+		    				previewImgThumb("#msgThumbImg1", filepath, filepath1);
+		                }
+		    			if(tmpmsginfo.filepath2) {
+		    				var filepath2 = tmpmsginfo.filepath2;
+		                    var filepath = "/fileupload/loadImg?filepath=" + filepath2;
+		                    var arrayFile = filepath2.split("/");
+		                    filepath2 = arrayFile[arrayFile.length-1];
+		    				previewImgThumb("#msgThumbImg2", filepath, filepath2);
+		                }
+		    			if(tmpmsginfo.filepath3) {
+		    				var filepath3 = tmpmsginfo.filepath3;
+		                    var filepath = "/fileupload/loadImg?filepath=" + filepath3;
+		                    var arrayFile = filepath3.split("/");
+		                    filepath3 = arrayFile[arrayFile.length-1];
+		    				previewImgThumb("#msgThumbImg3", filepath, filepath3);
+		                }
+
+		    			fnChangeMsg(tmpmsginfo.msgtype);
+
+		        	}else{
+
+		        		fnChangeMsg('SMS');
+		        	}
+
+		    	},
+		    	error : function(e) {
+		    		alert(e);
+
+		    	}
+		    });
+			return false;
+		}
+
+		function initaddButton(){
+			var btnListHtml = "";
+			var btnListAreaHtml = "";
+			var kkoButtonJson;
+			var data;
+
+			var kkoButtonName;
+			var kkoButtonMobile;
+			var kkoButtonPC;
+			var kkoButtonIOS;
+			var kkoButtonAndroid;
+
+			var dataName;
+			var dataMobile;
+			var dataPC;
+			var dataIOS;
+			var dataAndroid;
+
+			var im = 0;
+			var ip = 0;
+			var ii = 0;
+			var ia = 0;
+
+			kkoButtonJson = $("#buttonTypeTmp").val();
+
+			data = kkoButtonJson.split(",");
+			if (kkoButtonJson != null && data.length > 0) {
+
+				kkoButtonName = $("#buttonNameTmp").val();
+				kkoButtonMobile = $("#buttonMobileTmp").val();
+				kkoButtonPC = $("#buttonPCTmp").val();
+				kkoButtonIOS = $("#buttonIOSTmp").val();
+				kkoButtonAndroid = $("#buttonAndroidTmp").val();
+
+				dataName =  kkoButtonName.split(",");
+				dataMobile =  kkoButtonMobile.split(",");
+				dataPC =  kkoButtonPC.split(",");
+				dataIOS =  kkoButtonIOS.split(",");
+				dataAndroid =  kkoButtonAndroid.split(",");
+
+				for(var i = 0; i < data.length; i++){
+					if(data[i] == "WL"){
+						//웹링크
+						btnListHtml += "<tr style='background:#efefef;'>";
+						btnListHtml += "	<th rowspan='2'>웹링크: <input type='hidden' id='addBtnType' name='addBtnType' value='WL' /></th>";
+						btnListHtml += "	<td rowspan='2'><input type='text' id='buttonNmWl' name='jsonName' style='width:190px;' placeholder='14자 권장(최대 28자)' maxlength='28'/ onfocusout='getMsgJsonButton();' value='"+dataName[i]+"'></td>";
+						btnListHtml += "	<td style='font-size:12px;'><input type='text' id='mUrlWl' name='jsonMobile' style='width:200px;' placeholder='Mobile' maxlength='200' onfocusout='getMsgJsonButton();' value='" +dataMobile[im]+"'/></td>";
+						btnListHtml += "	<td rowspan='2'><button type='button' class='smbt btn_red' onclick='removeButton(this, \"WL\");'>삭제</button></td>";
+						btnListHtml += "</tr>";
+						btnListHtml += "<tr style='background:#efefef;'>";
+						btnListHtml += "	<td style='font-size:12px;'><input type='text' id='pUrlWl' name='jsonPC' style='width:200px;' placeholder='PC(선택)' maxlength='200' onfocusout='getMsgJsonButton();' value='"+dataPC[ip]+"'/></td>";
+						btnListHtml += "</tr>";
+
+						btnListAreaHtml += "<div  class='Tbtbox' >웹링크</div>";
+						im++;
+						ip++;
+					} else if(data[i] == 'AL') {
+						//앱링크
+						btnListHtml += "<tr style='background:#efefef;'>";
+						btnListHtml += "	<th rowspan='2'>앱링크: <input type='hidden' id='addBtnType' name='addBtnType' value='AL' /></th>";
+						btnListHtml += "	<td rowspan='2'><input type='text' id='buttonNmAl' name='jsonName' style='width:190px;' placeholder='14자 권장(최대 28자)' maxlength='28'/ onfocusout='getMsgJsonButton();' value='"+dataName[i]+"'></td>";
+						btnListHtml += "	<td style='font-size:12px;'><input type='text' id='iUrlAl' name='jsonIOS' style='width:200px;' placeholder='IOS' maxlength='200' onfocusout='getMsgJsonButton();' value='"+dataIOS[ii]+"'/></td>";
+						btnListHtml += "	<td rowspan='2'><button type='button' class='smbt btn_red' onclick='removeButton(this, \"AL\");'>삭제</button></td>";
+						btnListHtml += "</tr>";
+						btnListHtml += "<tr style='background:#efefef;'>";
+						btnListHtml += "	<td style='font-size:12px;'><input type='text' id='aUrlAl' name='jsonAndroid' style='width:200px;' placeholder='Android' maxlength='200' onfocusout='getMsgJsonButton();' value='"+dataAndroid[ia]+"'/></td>";
+						btnListHtml += "</tr>";
+
+						btnListAreaHtml += "<div  class='Tbtbox' >앱링크</div>";
+						ii++;
+						ia++;
+					} else if(data[i] == 'DS') {
+						//배송조회
+						btnListHtml += "<tr style='background:#efefef;'>";
+						btnListHtml += "	<th>배송조회: <input type='hidden' id='addBtnType' name='addBtnType' value='DS' /></th>";
+						btnListHtml += "	<td><input type='text' id='buttonNmDs' name='jsonName' style='width:190px;' placeholder='14자 권장(최대 28자)' maxlength='28' onfocusout='getMsgJsonButton();' value='"+dataName[i]+"' /></td>";
+						btnListHtml += "	<td style='font-size:12px;'>* 알림톡 메시지 파싱을 통해 배송조회 카카오 검색 페이지 링크가 자동 생성됩니다.</td>";
+						btnListHtml += "	<td><button type='button' class='smbt btn_red' onclick='removeButton(this, \"DS\");'>삭제</button></td>";
+						btnListHtml += "</tr>";
+
+						btnListAreaHtml += "<div  class='Tbtbox' >배송조회</div>";
+					} else if(data[i] == 'BK') {
+						//키워드
+						btnListHtml += "<tr style='background:#efefef;'>";
+						btnListHtml += "	<th>키워드: <input type='hidden' id='addBtnType' name='addBtnType' value='BK' /></th>";
+						btnListHtml += "	<td><input type='text' id='buttonNmBk' name='jsonName' style='width:190px;' placeholder='14자 권장(최대 28자)' maxlength='28' onfocusout='getMsgJsonButton();' value='"+dataName[i]+"' /></td>";
+						btnListHtml += "	<td style='font-size:12px;'>* 버튼명이 상담원에게 전달됩니다.</td>";
+						btnListHtml += "	<td><button type='button' class='smbt btn_red' onclick='removeButton(this, \"BK\");'>삭제</button></td>";
+						btnListHtml += "</tr>";
+
+						btnListAreaHtml += "<div  class='Tbtbox' >키워드</div>";
+					} else if(data[i] == 'MD') {
+						//메시지전달
+						btnListHtml += "<tr style='background:#efefef;'>";
+						btnListHtml += "	<th>메시지 전달: <input type='hidden' id='addBtnType' name='addBtnType' value='MD' /></th>";
+						btnListHtml += "	<td><input type='text' id='buttonNmMd' name='jsonName' style='width:190px;' placeholder='14자 권장(최대 28자)' maxlength='28' onfocusout='getMsgJsonButton();' value='"+dataName[i]+"' /></td>";
+						btnListHtml += "	<td style='font-size:12px;'>* 버튼명과 메시지 본문이 상담원에게 전달됩니다</td>";
+						btnListHtml += "	<td><button type='button' class='smbt btn_red' onclick='removeButton(this, \"MD\");'>삭제</button></td>";
+						btnListHtml += "</tr>";
+
+						btnListAreaHtml += "<div  class='Tbtbox' >메시지전달</div>";
+					} else {}
+
+				}
+			}
+			$("#btnList").append(btnListHtml);
+			$("#btnListArea").append(btnListAreaHtml);
+
+
+			var btnTitWrapHtml = "";
+			btnTitWrapHtml += "<tr>";
+			btnTitWrapHtml += "	<th>버튼타입</th>";
+			btnTitWrapHtml += "	<th>버튼이름</th>";
+			btnTitWrapHtml += "	<th colspan='2'>버튼링크</th>";
+			btnTitWrapHtml += "</tr>";
+
+			$("#btnTitWrap").html(btnTitWrapHtml);
+		}
+
+		//버튼 타입 추가
+		function addButton(){
+			var type = $("#buttonType").val();
+
+			var frm = $("#btnList");
+			var addChkCnt = 0;
+			frm.find('input[name="addBtnType"]').each(function(){
+				//if(type == $(this).val()) addChk = false;
+				addChkCnt++;
+			});
+			if(addChkCnt > 4) {
+				showAlertLayer("최대 5개까지 추가할 수 있습니다.");
+				return false;
+			} else {
+				var btnListHtml = "";
+				var btnListAreaHtml = "";
+
+				//html 복사
+				if(type == 'WL') {
+					//웹링크
+					btnListHtml += "<tr style='background:#efefef;'>";
+					btnListHtml += "	<th rowspan='2'>웹링크: <input type='hidden' id='addBtnType' name='addBtnType' value='WL' /></th>";
+					btnListHtml += "	<td rowspan='2'><input type='text' id='buttonNmWl' name='jsonName' style='width:190px;' placeholder='14자 권장(최대 28자)' maxlength='28'/ onfocusout='getMsgJsonButton();'></td>";
+					btnListHtml += "	<td style='font-size:12px;'><input type='text' id='mUrlWl' name='jsonMobile' style='width:200px;' placeholder='Mobile(필수)' maxlength='200' onfocusout='getMsgJsonButton();'/></td>";
+					btnListHtml += "	<td rowspan='2'><button type='button' class='smbt btn_red' onclick='removeButton(this, \"WL\");'>삭제</button></td>";
+					btnListHtml += "</tr>";
+					btnListHtml += "<tr style='background:#efefef;'>";
+					btnListHtml += "	<td style='font-size:12px;'><input type='text' id='pUrlWl' name='jsonPC' style='width:200px;' placeholder='PC(선택)' maxlength='200' onfocusout='getMsgJsonButton();'/></td>";
+					btnListHtml += "</tr>";
+
+					btnListAreaHtml += "<div  class='Tbtbox' >웹링크</div>";
+
+				} else if(type == 'AL') {
+					//앱링크
+					btnListHtml += "<tr style='background:#efefef;'>";
+					btnListHtml += "	<th rowspan='2'>앱링크: <input type='hidden' id='addBtnType' name='addBtnType' value='AL' /></th>";
+					btnListHtml += "	<td rowspan='2'><input type='text' id='buttonNmAl' name='jsonName' style='width:190px;' placeholder='14자 권장(최대 28자)' maxlength='28'/ onfocusout='getMsgJsonButton();'></td>";
+					btnListHtml += "	<td style='font-size:12px;'><input type='text' id='iUrlAl' name='jsonIOS' style='width:200px;' placeholder='IOS(필수)' maxlength='200' onfocusout='getMsgJsonButton();'/></td>";
+					btnListHtml += "	<td rowspan='2'><button type='button' class='smbt btn_red' onclick='removeButton(this, \"AL\");'>삭제</button></td>";
+					btnListHtml += "</tr>";
+					btnListHtml += "<tr style='background:#efefef;'>";
+					btnListHtml += "	<td style='font-size:12px;'><input type='text' id='aUrlAl' name='jsonAndroid' style='width:200px;' placeholder='Android(필수)' maxlength='200' onfocusout='getMsgJsonButton();'/></td>";
+					btnListHtml += "</tr>";
+
+					btnListAreaHtml += "<div  class='Tbtbox' >앱링크</div>";
+				} else if(type == 'BK') {
+					//키워드
+					btnListHtml += "<tr style='background:#efefef;'>";
+					btnListHtml += "	<th>키워드: <input type='hidden' id='addBtnType' name='addBtnType' value='BK' /></th>";
+					btnListHtml += "	<td><input type='text' id='buttonNmBk' name='jsonName' style='width:190px;' placeholder='14자 권장(최대 28자)' maxlength='28' onfocusout='getMsgJsonButton();'/></td>";
+					btnListHtml += "	<td style='font-size:12px;'>* 버튼명이 상담원에게 전달됩니다.</td>";
+					btnListHtml += "	<td><button type='button' class='smbt btn_red' onclick='removeButton(this, \"BK\");'>삭제</button></td>";
+					btnListHtml += "</tr>";
+
+					btnListAreaHtml += "<div  class='Tbtbox' >키워드</div>";
+				} else if(type == 'MD') {
+					//메시지전달
+					btnListHtml += "<tr style='background:#efefef;'>";
+					btnListHtml += "	<th>메시지 전달: <input type='hidden' id='addBtnType' name='addBtnType' value='MD' /></th>";
+					btnListHtml += "	<td><input type='text' id='buttonNmMd' name='jsonName' style='width:190px;' placeholder='14자 권장(최대 28자)' maxlength='28' onfocusout='getMsgJsonButton();'/></td>";
+					btnListHtml += "	<td style='font-size:12px;'>* 버튼명과 메시지 본문이 상담원에게 전달됩니다</td>";
+					btnListHtml += "	<td><button type='button' class='smbt btn_red' onclick='removeButton(this, \"MD\");'>삭제</button></td>";
+					btnListHtml += "</tr>";
+
+					btnListAreaHtml += "<div  class='Tbtbox' >메시지전달</div>";
+				} else {}
+
+				$("#btnList").append(btnListHtml);
+
+				$("#btnListArea").append(btnListAreaHtml);
+			};
+
+			addTempKkoJson();
+			typeTempSave();
+		}
+
+		//버튼 영역 삭제
+		function removeButton(obj, nextCk){
+			if(nextCk == 'WL' || nextCk == 'AL'){
+				$(obj).parent().parent().next().remove();
+			}
+			$(obj).parent().parent().remove();
+			$("#" + nextCk + "tmp").val("N");
+			$("#msgAdd" + nextCk).remove();
+
+			addTempKkoJson();
+			typeTempSave();
+
+		    $("#btnListArea").empty();
+
+
+			var kkoButtonJson;
+			var data;
+			var btnListAreaHtml = "";
+			kkoButtonJson = $("#buttonTypeTmp").val();
+
+			data = kkoButtonJson.split(",");
+			if (kkoButtonJson != null && data.length > 0) {
+				for(var i = 0; i < data.length; i++){
+
+					if(data[i] == "WL"){
+						//웹링크
+
+						btnListAreaHtml += "<div  class='Tbtbox' >웹링크</div>";
+
+					} else if(data[i] == 'AL') {
+						//앱링크
+
+						btnListAreaHtml += "<div  class='Tbtbox' >앱링크</div>";
+					} else if(data[i] == 'DS') {
+						//배송조회
+
+						btnListAreaHtml += "<div  class='Tbtbox' >배송조회</div>";
+					} else if(data[i] == 'BK') {
+						//키워드
+
+						btnListAreaHtml += "<div  class='Tbtbox' >키워드</div>";
+					} else if(data[i] == 'MD') {
+						//메시지전달
+
+						btnListAreaHtml += "<div  class='Tbtbox' >메시지전달</div>";
+					} else {}
+
+				}
+			}
+			$("#btnListArea").append(btnListAreaHtml);
+		}
+
+		//메시지 저장
+		function typeTempSave() {
+			var str = "";
+			var cnt = 0;
+			var node = "";
+			node = document.getElementsByName('jsonName');
+			Array.prototype.forEach.call(node, function(element){
+				if(cnt > 0) str += ",";
+				str += element.value;
+				cnt++;
+			});
+			$("#buttonNameTmp").val(str);
+			str = "";
+			cnt = 0;
+			node = document.getElementsByName('jsonMobile');
+			Array.prototype.forEach.call(node, function(element){
+				if(cnt > 0) str += ",";
+				str += element.value;
+				cnt++;
+			});
+			$("#buttonMobileTmp").val(str);
+			str = "";
+			cnt = 0;
+			node = document.getElementsByName('jsonPC');
+			Array.prototype.forEach.call(node, function(element){
+				if(cnt > 0) str += ",";
+				str += element.value;
+				cnt++;
+			});
+			$("#buttonPCTmp").val(str);
+			str = "";
+			cnt = 0;
+			node = document.getElementsByName('jsonIOS');
+			Array.prototype.forEach.call(node, function(element){
+				if(cnt > 0) str += ",";
+				str += element.value;
+				cnt++;
+			});
+			$("#buttonIOSTmp").val(str);
+			str = "";
+			cnt = 0;
+			node = document.getElementsByName('jsonAndroid');
+			Array.prototype.forEach.call(node, function(element){
+				if(cnt > 0) str += ",";
+				str += element.value;
+				cnt++;
+			});
+			$("#buttonAndroidTmp").val(str);
+		}
+
+		function getMsgJsonButton() {
+			typeTempSave();
+		}
+
+		function mmsChange(_yn) {
+			if(_yn == 'Y')
+			{
+				$("#msgMmsArea").css("display", "inline-block");
+				$("#msgMmsArea2").css("display", "inline-block");
+				$("#failmsgyn").val("Y");
+			}
+			else
+			{
+				$("#msgMmsArea").css("display", "none");
+				$("#msgMmsArea2").css("display", "none");
+				$("#failmsgyn").val("N");
+				$("#failmsgtype").val("NO");
+				$("#failfilepath").val("");
+				$("#failsubject").val("");
+				$("#failmsg").val("");
+				fnFileDelete("2");
+			}
+		}
+
+		//친구톡 와이드 선택에 따른 화면 클래스 추가
+		function wideChange(_yn) {
+			if(_yn == 'Y')
+			{
+				$("#msgAddArea").addClass('wideSize');
+				$("#wideyn").val("Y");
+			}
+
+			else
+			{
+				$("#msgAddArea").removeClass('wideSize');
+				$("#wideyn").val("N");
+			}
+		}
+
+		function addTempKkoJson() {
+			var str = "";
+			$("#btnList").find('input[name="addBtnType"]').each(function(){
+				if(str != "") str += ",";
+				str += $(this).val();
+			});
+
+			if (str != "") {
+				if ($("#btnTitWrap tr").length == 0) {
+					var btnTitWrapHtml = "";
+					btnTitWrapHtml += "<tr>";
+					btnTitWrapHtml += "	<th>버튼타입</th>";
+					btnTitWrapHtml += "	<th>버튼이름</th>";
+					btnTitWrapHtml += "	<th colspan='2'>버튼링크</th>";
+					btnTitWrapHtml += "</tr>";
+
+					$("#btnTitWrap").html(btnTitWrapHtml);
+				}
+			} else {
+				$("#btnTitWrap").empty();
+			}
+
+			$("#buttonTypeTmp").val(str);
+		}
+
+		//메세지 내용  재전송 메세지 copy
+		function msgtofailmsg()
+		{
+			var failmsgyn = $("#failmsgyn").val();
+			if (failmsgyn != null && failmsgyn == "Y") {
+				$("#failmsg").val($("#msg").val());
+				mmschkLen();
+			}
+		}
+/*
+		function addtemplate()
+		{
+			var senderkey = $('#profileKey').find('option:selected').attr('value').trim();
+			var templtcode = $("#templatecode").val();
+
+			if(!templtcode){alert("템플릿코드를 입력해 주세요.");return false;}
+			if(!senderkey){alert("프로파일키를 선택해 주세요.");return false;}
+
+			var param = "templtcode=" + templtcode + "&senderkey="+senderkey;
+
+			$.ajax({
+		        url : 'templtinfo',
+		        type : 'post',
+		        data : param,
+		        dataType : 'text',
+		        success : function(data) {
+		        	if(data.length > 0){
+		        		var tmpinfo = JSON.parse(data);
+		        		if(tmpinfo.code == "200")
+		       			{
+		        			console.log(tmpinfo.data.list);
+		        			if(tmpinfo.data.list.length > 0)
+		        			{
+		        				$("#msg").val(tmpinfo.data.list[0].templtContent);
+		        				msgtofailmsg();
+
+		        				if(tmpinfo.data.list[0].buttons.length > 0)
+		            			{
+		        					delbutton();
+
+		        					for(var i =0;tmpinfo.data.list[0].buttons.length > i; i++)
+		        					{
+		        						var str1 = "";
+		        						if(str1 != "") str1 += ",";
+		    							str1 += tmpinfo.data.list[0].buttons[i].linkType;
+		        						$("#buttonTypeTmp").val(str1);
+
+		        						var str2 = "";
+		        						if(str2 != "") str2 += ",";
+		    							str2 += tmpinfo.data.list[0].buttons[i].linkName;
+		        						$("#buttonNameTmp").val(str2);
+
+		        						if(tmpinfo.data.list[0].buttons[i].linkM)
+		       							{
+		        							var str3 = "";
+		            						if(str3 != "") str3 += ",";
+		        							str3 += tmpinfo.data.list[0].buttons[i].linkM;
+		            						$("#buttonMobileTmp").val(str3);
+		       							}
+		        						if(tmpinfo.data.list[0].buttons[i].linkP)
+		       							{
+		        							var str4 = "";
+		            						if(str4 != "") str4 += ",";
+		        							str4 += tmpinfo.data.list[0].buttons[i].linkP;
+		            						$("#buttonPCTmp").val(str4);
+		       							}
+		        						if(tmpinfo.data.list[0].buttons[i].linkI)
+		       							{
+		        							var str5 = "";
+		            						if(str5 != "") str5 += ",";
+		        							str5 += tmpinfo.data.list[0].buttons[i].linkI;
+		            						$("#buttonIOSTmp").val(str5);
+		       							}
+		        						if(tmpinfo.data.list[0].buttons[i].linkA)
+		       							{
+		        							var str6 = "";
+		            						if(str6 != "") str6 += ",";
+		        							str6 += tmpinfo.data.list[0].buttons[i].linkA;
+		            						$("#buttonAndroidTmp").val(str6);
+		       							}
+		        					}
+
+		        					initaddButton();
+		            			}
+		        			}
+		       			}
+		        	}
+		    	},
+		    	error : function(e) {
+		    		//alert(e);
+
+		    	}
+		    });
+			return false;
+		}
+
+		 */
+		function arrayBufferToBase64(buffer) {
+		    return new Promise( (succ,fail)=>{
+		        try {
+		            var binary = '';
+		            const bytes = new Uint8Array(buffer);
+		            const len = bytes.byteLength;
+		            for (let i = 0; i < len; i++) {
+		                binary += String.fromCharCode(bytes[i]);
+		            }
+		            succ( window.btoa(binary) );
+		        } catch(e){
+		            console.log('to big....');
+		            fail(e);
+		        }
+		    });
+		}
+
+/*
+	    function setUserData(data) {
+	    	$.each(data.arsNumL, function(index, item){//수신거부번호
+	    		$("#rejectnum option").remove();
+	        	$("#rejectnum").append("<option value='"+ item.ars_num +"'>"+ item.ars_num +"</option>");
+			});
+
+			$.each(data.dsptchNumL, function(index, item){//발신 번호
+				$("#sender option").remove();
+				$("#sender").append("<option value='"+ item.dsptch_num +"'>"+ item.dsptch_num +"</option>");
+			});
+
+			$.each(data.profL, function(index, item){//프로필 정보
+				$("#profileKey option").remove();
+				$("#profileKey").append("<option value='"+ item.org_id +"'>"+ item.plus_uuid +"</option>");
+			});
+	    	if($("#isSaveLoad").val() == "Y"){//mc 저장데이터 있을경우 실행 안함
+		    	var savedInfo = JSON.parse($("#saveUserInfo").val());
+		    	//callback ars_080_num
+		    	$("#sender").val(savedInfo.callback);
+		    	if($("#advYn1").is(":checked"))	$("#rejectnum").val(savedInfo.ars_080_num);
+	    	}else{
+
+	    	}
+
+		}
+	     */
+	    function setUserDataforTab(data) {
+	    	$.each(data.arsNumL, function(index, item){//수신거부번호
+	    		if (index == 0) {
+		    		$("#rejectnum option").remove();
+	    		}
+	        	$("#rejectnum").append("<option value='"+ item.ars_num +"'>"+ item.ars_num +"</option>");
+			});
+
+			$.each(data.dsptchNumL, function(index, item){//발신 번호
+				if (index == 0) {
+					$("#sender option").remove();
+				}
+				$("#sender").append("<option value='"+ item.dsptch_num +"'>"+ item.dsptch_num +"</option>");
+			});
+
+			$.each(data.profL, function(index, item){//프로필 정보
+				if (index == 0) {
+					$("#profileKey option").remove();
+				}
+				$("#profileKey").append("<option value='"+ item.plus_uuid +"'>"+ item.plus_uuid +"</option>");
+			});
+		}
+
+	</script>
+
+
+</body>
+</html>
