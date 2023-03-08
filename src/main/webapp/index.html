@@ -31,10 +31,17 @@
   <script type='text/javascript' src='resources/js/ajaxCommon.js'></script>
   <script type="text/javascript" src="assets/js/require.js"></script>
   <style>
-    #divPosition {
-      position : absolute;
-      display: flex;
-      flex-direction: column;
+    #div1 {
+      margin: 3rem!important;
+      justify-content: center!important;
+      display: flex!important;
+    }
+    #div2 {
+	    width: 300px;
+	    height: 100%;
+	    display: flex;
+	    justify-content: center;
+	    flex-direction: column;
     }
 
     #textA01 {
@@ -53,20 +60,20 @@
   <input type="hidden" id="langType" name="langType"/>
 </form>
 
-  <div id="divPosition">
-    <div>
-      <label>phone number</label>
-    </div>
-    <input type="tel" id="phone" name="phone" required placeholder="00*-000*-0000" pattern="[0-9]{2,3}-[0-9]{3,4}-[0-9]{3,4}"
-           minlength="9" maxlength="13" size="30">
-    <div>
-      <label>text</label>
-    </div>
-    <textarea id="textA01" name="textA01">
-
-    </textarea>
-    <div>
-      <button onclick="smsSend()">send</button>
+  <div id="div1">
+  	<div id="div2">
+	    <div>
+	      <label>phone number</label>
+	    </div>
+	    <input type="tel" id="phone" name="phone" required placeholder="00*-000*-0000" pattern="[0-9]{2,3}-[0-9]{3,4}-[0-9]{3,4}"
+	           minlength="9" maxlength="13" size="30">
+	    <div>
+	      <label>text</label>
+	    </div>
+	    <textarea id="textA01" name="textA01">
+	
+	    </textarea>
+	    <button onclick="smsSend()">send</button>
     </div>
   </div>
 
