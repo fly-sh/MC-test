@@ -14,7 +14,7 @@
   <link rel="stylesheet" href="assets/css/content.css" type="text/css">
   <link type="text/css" rel="stylesheet" href="assets/css/jquery.timepicker.css" media=""/>
   <link rel="stylesheet" href="assets/css/jquery-ui.css" type="text/css" />
-  <link rel="stylesheet" href="/resources/css/multilingual.css" type="text/css">
+  <link rel="stylesheet" href="resources/css/multilingual.css" type="text/css">
 
   <script type="text/javascript" src="assets/js/jquery-1.11.2.min.js"></script>
   <script type="text/javascript" src="assets/js/jquery-ui-1.10.2.custom.min.js"></script>
@@ -23,12 +23,12 @@
   <script type="text/javascript" src="assets/js/common.js"></script>
   <script type="text/javascript" src="assets/js/respond.min.js"></script>
   <script type="text/javascript" src="assets/js/comfunc.js"></script>
-  <script type='text/javascript' src='/resources/js/lib/vendor/jquery.ui.datepicker.js'></script>
-  <script type='text/javascript' src='/resources/js/lib/vendor/jquery.ui.datepicker-ko.js'></script>
-  <script type='text/javascript' src='/resources/js/lib/vendor/jquery.ui.datepicker-en.js'></script>
-  <script type='text/javascript' src='/resources/js/multilingual.js'></script>
+  <script type='text/javascript' src='resources/js/lib/vendor/jquery.ui.datepicker.js'></script>
+  <script type='text/javascript' src='resources/js/lib/vendor/jquery.ui.datepicker-ko.js'></script>
+  <script type='text/javascript' src='resources/js/lib/vendor/jquery.ui.datepicker-en.js'></script>
+  <script type='text/javascript' src='resources/js/multilingual.js'></script>
 
-  <script type='text/javascript' src='/resources/js/ajaxCommon.js'></script>
+  <script type='text/javascript' src='resources/js/ajaxCommon.js'></script>
   <script type="text/javascript" src="assets/js/require.js"></script>
   <style>
     #divPosition {
@@ -72,9 +72,6 @@
 
 
 <script type="text/javascript">
-
-  $(window).ready(loadKkoForm);
-
   function smsSend() {
 
     fetch("https://api.megabird.co.kr:8080/v1/openapi/sms/send", {
