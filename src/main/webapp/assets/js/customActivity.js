@@ -10,7 +10,6 @@ define([
     var lastStepEnabled = false;
     var steps = [ // initialize to the same value as what's set in config.json for consistency
         { "label": "Step 1", "key": "step1" },
-        { "label": "Step 2", "key": "step2", "active": false }
     ];
     var currentStep = steps[0].key;
     var eventDefinitionKey ="";
@@ -21,7 +20,7 @@ define([
     var CJfuelapiRestHost = "";
     var CJfuel2token = "";
     
-    $(window).ready(onRender);
+    //$(window).ready(onRender);
     
     connection.on('initActivity', initialize);    
     connection.on('requestedTokens', onGetTokens);

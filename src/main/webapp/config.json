@@ -1,7 +1,7 @@
 {
 	"workflowApiVersion": "1.1",
 	"metaData": {
-		"icon": "images/sms.png",
+		"icon": "resources/images/alert.png",
 		"category": "message"
 	},
 	"type": "myActivityType",
@@ -12,69 +12,21 @@
 		}
 	},
 	"arguments": {
-		"execute": {
-			"inArguments": [{
-				"myInArgument": "inArgument coming from iframe"
-			}],
-			"outArguments": [],
-			"timeout": 100000,
-			"retryCount": 1,
-			"retryDelay": 10000,
-			"concurrentRequests" : 5,
-			"url": "https://flysh.link/execute"
-		}
+		
 	},
 	"configurationArguments": {
-		"save": {
-			"url": "URI/for/your/activity/save"
-		},
-		"publish": {
-			"url": "URI/for/your/activity/publish"
-		},
-		"validate": {
-			"url": "URI/for/your/activity/validate"
-		},
-		"stop": {
-			"url": "URI/for/your/activity/stop"
-		}
+		
 	},
 	"wizardSteps": [{
 			"label": "Step 1",
 			"key": "step1"
-		},
-		{
-			"label": "Step 2",
-			"key": "step2"
-		},
-		{
-			"label": "Step 3",
-			"key": "step3"
-		},
-		{
-			"label": "Step 4",
-			"key": "step4",
-			"active": false
 		}
 	],
 	"userInterfaces": {
 		"configModal": {
-			"height": 100,
-			"width": 150,
-			"fullscreen": false
-		}
-	},
-	"schema": {
-		"arguments": {
-			"execute": {
-				"inArguments": [{
-					"myInArgument": {
-						"dataType": "<some data type>",
-						"isNullable": false,
-						"direction": "in"
-					}
-				}],
-				"outArguments": []
-			}
+			"height": 600,
+			"width": 500,
+			"fullscreen": true
 		}
 	}
 }
