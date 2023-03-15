@@ -46,8 +46,7 @@ define([
         
         connection.trigger('updateButton', { button: 'next', enabled: true });
         console.log("render Done");
-        
-      
+              
     }
     
     function onGetEventDefinition(data) {
@@ -517,6 +516,8 @@ define([
         if(inArguments[0].msgType){
         	var setData = inArguments[0];
     		msgtype = setData.msgType;
+    		
+    		console.log('setData :: '+setData);
     		
     		$("#isSaveLoad").val("Y");//mc 데이터 로드 유무
     		
